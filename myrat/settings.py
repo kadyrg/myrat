@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     
     "accounts",
     "tasks",
+    "clocks",
 ]
 
 REST_FRAMEWORK = {

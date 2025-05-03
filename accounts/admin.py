@@ -1,7 +1,22 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from .models import User
+from clocks.models import Clock
 
+
+class ClockInline(admin.TabularInline):
+    model = Clock
+    extra = 0
+    readonly_fields = ("id", "employee", "started_date", "ended_date", "duration", "status")
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ("id", "email", "first_name", "last_name")
@@ -13,7 +28,7 @@ class UserAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('date_joined', 'password')
     search_fields = ('email', 'first_name', 'last_name')
-
+    inlines = [ClockInline]
 
 admin.site.register(User, UserAdmin)
 
