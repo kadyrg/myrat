@@ -18,6 +18,10 @@ admin.site.register(Task, TaskAdmin)
 
 
 class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'question', 'task', 'answer')
+    fieldsets = (
+        (None, {"fields": ( 'question', 'task', 'answer')}),
+    )
     def has_add_permission(self, request):
         return False
 

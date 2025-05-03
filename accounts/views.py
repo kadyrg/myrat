@@ -33,20 +33,13 @@ class UserViewSet(viewsets.GenericViewSet):
                     except:
                         return Response({"detail": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=['put', 'get'], detail=False, url_path='me')
+    @action(methods=['get'], detail=False, url_path='me')
     def profile(self, request, *args, **kwargs):
         if request.method == 'GET':
             user = self.request.user
             serializer = self.get_serializer(user)
             return Response(serializer.data)
-        
-        if request.method == 'PUT':
-            user = request.user
-            serializer = self.get_serializer(user, data=request.data, partial=True)
 
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_permissions(self):
         if self.action == "profile":
