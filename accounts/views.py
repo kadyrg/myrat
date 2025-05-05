@@ -29,10 +29,12 @@ class UserViewSet(viewsets.GenericViewSet):
                     try:
                         user = authenticate(email=email, password=password)
                         access_token = RefreshToken.for_user(user).access_token
-                        return Response({'access': str(access_token)}, status=status.HTTP_200_OK)
+                        return Response({'access': str(access_token),
+                                         'username': f"{ user.first_name} {user.last_name}"},
+                                        status=status.HTTP_200_OK)
                     except:
                         return Response({"detail": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
-
+                    
     @action(methods=['get'], detail=False, url_path='me')
     def profile(self, request, *args, **kwargs):
         if request.method == 'GET':

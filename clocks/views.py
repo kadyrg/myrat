@@ -1,18 +1,18 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Clock
 from .serializers import ClockListSerializer
 
 
-class ClockViewSet(viewsets.GenericViewSet):
-    def list(self, *args, **kwargs):
-        employee = self.request.user
-        queryset = Clock.objects.filter(employee=employee.pk).order_by('-started_date')
-        serializer = ClockListSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
+class ClockPagination(PageNumberPagination):
+    page_size_query_param = 'page_size'
+    
+class ClockViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    pagination_class = ClockPagination
+    serializer_class = ClockListSerializer
 
     @action(methods=['post'], detail=False, url_path='start_clock')
     def start_clock(self, *args, **kwargs):
@@ -42,7 +42,7 @@ class ClockViewSet(viewsets.GenericViewSet):
             return Response({"detail": "Something went wrong", "error": f"{e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-    @action(methods=['post'], detail=False, url_path='last_clock')
+    @action(methods=['get'], detail=False, url_path='last_clock')
     def last_clock(self, *args, **kwargs):
         employee = self.request.user
         last_clock = Clock.objects.filter(employee=employee.pk).last()
@@ -52,3 +52,7 @@ class ClockViewSet(viewsets.GenericViewSet):
         if not last_clock:
             return Response({"detail": "You don't have any clocks yet"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serailizer.data, status=status.HTTP_200_OK)
+
+    def get_queryset(self):
+        employee = self.request.user
+        return Clock.objects.filter(employee=employee.pk).order_by('-started_date')

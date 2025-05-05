@@ -1,32 +1,19 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Task, Question
 from .serializers import TaskListSerializer, TaskRetrieveSerializer, QuestionSerializer
 from accounts.models import User
 
 
-class TaskViewSet(viewsets.GenericViewSet):
-    def list(self, *args, **kwargs):
-        employee = self.request.user
-        queryset = Task.objects.filter(employee=employee.id)
-        serializer = TaskListSerializer(queryset, many=True)
-        if not User.objects.filter(id=employee.id).first():
-            return Response({"detail": "Employee does not exist"}, status=status.HTTP_401_UNAUTHORIZED)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    
-    def retrieve(self, request, *args, **kwargs):
-        try:
-            task = Task.objects.get(pk=kwargs.get('pk'))
-        except Task.DoesNotExist:
-            return Response({"detail": "Task not found."}, status=status.HTTP_404_NOT_FOUND)
+class TaskPagination(PageNumberPagination):
+    page_size_query_param = 'page_size'
 
-        serializer = TaskRetrieveSerializer(task, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+class TaskViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    pagination_class = TaskPagination
     
     @action(methods=['post'], detail=True, url_path='start_task')
     def start_task(self, *args, **kwargs):
@@ -117,3 +104,13 @@ class TaskViewSet(viewsets.GenericViewSet):
             return Response({"message": "Question created"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"detail": f"Something went wrong{e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get_queryset(self):
+        employee = self.request.user
+        return Task.objects.filter(employee=employee.id).order_by("-created_date")
+    
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return TaskRetrieveSerializer
+        if self.action == "list":
+            return TaskListSerializer
