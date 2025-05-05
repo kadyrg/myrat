@@ -30,6 +30,7 @@ class UserViewSet(viewsets.GenericViewSet):
                         user = authenticate(email=email, password=password)
                         access_token = RefreshToken.for_user(user).access_token
                         return Response({'access': str(access_token),
+                                         'email': user.email,
                                          'username': f"{ user.first_name} {user.last_name}"},
                                         status=status.HTTP_200_OK)
                     except:
