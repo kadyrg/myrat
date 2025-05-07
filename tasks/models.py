@@ -26,14 +26,14 @@ class Task(models.Model):
     def clean(self):
         if self.employee.type == "manager":
             raise ValidationError("Selected employee has type manager")
-        if self.status in ["success", "failed"]:
-            instance = Task.objects.get(pk=self.pk)
-            if instance.status != "active":
-                raise ValidationError("Only active tasks can be succeed or failed")
-        if self.status == "declined":
-            instance = Task.objects.get(pk=self.pk)
-            if instance.status != "deactive":
-                raise ValidationError("Only deactive tasks can be declined")
+        # if self.status in ["success", "failed"]:
+        #     instance = Task.objects.get(pk=self.pk)
+        #     if instance.status != "active":
+        #         raise ValidationError("Only active tasks can be succeed or failed")
+        # if self.status == "declined":
+        #     instance = Task.objects.get(pk=self.pk)
+        #     if instance.status != "deactive":
+        #         raise ValidationError("Only deactive tasks can be declined")
             
     def start_task(self, *args, **kwargs):
         self.status = "active"

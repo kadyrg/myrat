@@ -24,7 +24,7 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ('type', )
     fieldsets = (
         ('Info', {'fields': ('email', 'first_name', 'last_name')}),
-        ('Details', {'fields': ('type', 'new_password', 'is_active', 'date_joined')}),
+        ('Details', {'fields': ('type', 'hourly_salary', 'new_password', 'is_active', 'date_joined')}),
     )
     readonly_fields = ('date_joined', 'password')
     search_fields = ('email', 'first_name', 'last_name')

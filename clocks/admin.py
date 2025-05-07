@@ -4,7 +4,7 @@ from .models import Clock
 
 
 class ClockAdmin(admin.ModelAdmin):
-    list_display = ("id", "employee", "started_date", "ended_date", "duration", "status")
+    list_display = ("id", "employee", "started_date", "ended_date", "duration", "amount", "status", 'daily_record')
     
     def has_add_permission(self, request):
         return False

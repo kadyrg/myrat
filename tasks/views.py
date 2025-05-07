@@ -24,12 +24,12 @@ class TaskViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return Response({"detail": "Employee does not exist"}, status=status.HTTP_401_UNAUTHORIZED)
         if not task:
             return Response({"detail": "Task with this id does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        if task.status == "deactive":
-            task.start_task()
-            return Response({"message": f"Task {task_id} started"}, status=status.HTTP_200_OK)
         if task.status == "active":
             return Response({"detail": f"Task {task_id} already started"}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"detail": f"Task {task_id} cannot be started"}, status=status.HTTP_400_BAD_REQUEST)
+        # if task.status == "deactive":
+        task.start_task()
+        return Response({"message": f"Task {task_id} started"}, status=status.HTTP_200_OK)
+        # return Response({"detail": f"Task {task_id} cannot be started"}, status=status.HTTP_400_BAD_REQUEST)
     
     
     @action(methods=['post'], detail=True, url_path='end_task')
@@ -41,10 +41,12 @@ class TaskViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return Response({"detail": "Employee does not exist"}, status=status.HTTP_401_UNAUTHORIZED)
         if not task:
             return Response({"detail": "Task with this id does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        if task.status == "active":
-            task.end_task()
-            return Response({"message": f"Task {task_id} ended"}, status=status.HTTP_200_OK)
-        return Response({"detail": f"Task {task_id} cannot be ended"})
+        if task.status == "success":
+            return Response({"detail": f"Task {task_id} already finished"}, status=status.HTTP_400_BAD_REQUEST)
+        # if task.status == "active":
+        task.end_task()
+        return Response({"message": f"Task {task_id} ended"}, status=status.HTTP_200_OK)
+        # return Response({"detail": f"Task {task_id} cannot be ended"})
 
 
     @action(methods=['post'], detail=True, url_path='decline_task')
@@ -56,10 +58,12 @@ class TaskViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return Response({"detail": "Employee does not exist"}, status=status.HTTP_401_UNAUTHORIZED)
         if not task:
             return Response({"detail": "Task with this id does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        if task.status == "active":
-            task.decline_task()
-            return Response({"message": f"Task {task_id} declined"}, status=status.HTTP_200_OK)
-        return Response({"detail": f"Task {task_id} cannot be declined"})
+        if task.status == "declined":
+            return Response({"detail": f"Task {task_id} already declined"}, status=status.HTTP_400_BAD_REQUEST)
+        # if task.status == "active":
+        task.decline_task()
+        return Response({"message": f"Task {task_id} declined"}, status=status.HTTP_200_OK)
+        # return Response({"detail": f"Task {task_id} cannot be declined"})
 
 
     @action(methods=['post'], detail=True, url_path='fail_task')
@@ -71,10 +75,12 @@ class TaskViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return Response({"detail": "Employee does not exist"}, status=status.HTTP_401_UNAUTHORIZED)
         if not task:
             return Response({"detail": "Task with this id does not exist"}, status=status.HTTP_404_NOT_FOUND)
-        if task.status == "active":
-            task.fail_task()
-            return Response({"message": f"Task {task_id} failed"}, status=status.HTTP_200_OK)
-        return Response({"detail": f"Task {task_id} cannot be failed"})
+        # if task.status == "active":
+        if task.status == "failed":
+            return Response({"detail": f"Task {task_id} already failed"}, status=status.HTTP_400_BAD_REQUEST)
+        task.fail_task()
+        return Response({"message": f"Task {task_id} failed"}, status=status.HTTP_200_OK)
+        # return Response({"detail": f"Task {task_id} cannot be failed"})
 
 
     @swagger_auto_schema(

@@ -10,6 +10,7 @@ from rest_framework import permissions
 from accounts.views import UserViewSet
 from tasks.views import TaskViewSet
 from clocks.views import ClockViewSet
+from records.views import PerformanceViewSet
 
 
 router = routers.DefaultRouter()
@@ -17,6 +18,7 @@ router = routers.DefaultRouter()
 router.register('users', UserViewSet, basename="users")
 router.register('tasks', TaskViewSet, basename="tasks")
 router.register('clocks', ClockViewSet, basename="clocks")
+router.register('records', PerformanceViewSet, basename="records")
 
 schema_view = get_schema_view(
    openapi.Info(

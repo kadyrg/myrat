@@ -32,8 +32,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     type = models.CharField(max_length=50, choices=UserType, default=UserType.EMPLOYEE)
     date_joined = models.DateTimeField(default=timezone.now, editable=False)
-    new_password = models.CharField(max_length=50, null=True, blank=False)
-
+    new_password = models.CharField(max_length=50, null=True, blank=True)
+    hourly_salary = models.DecimalField(max_digits=15, decimal_places=2)
+    
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
