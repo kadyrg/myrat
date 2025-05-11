@@ -4,7 +4,7 @@ from .models import Task, Question
 
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "employee", "status", "started_date", "ended_date", "duration")
+    list_display = ("id", "title", "employee", "status", "created_date", "started_date", "ended_date", "duration")
     list_editable = ("title", "employee", "status")
     fieldsets = (
         ('Info', {'fields': ('title', 'description', 'employee')}),

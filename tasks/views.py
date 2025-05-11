@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
+from openai import OpenAI
 
 from .models import Task, Question
 from .serializers import TaskListSerializer, TaskRetrieveSerializer, QuestionSerializer
@@ -105,6 +106,16 @@ class TaskViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return Response({"message": f"Task {pk} must be started"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            # client = OpenAI(api_key="sk-8af330a6f5d841b58284bb98aea64741", base_url="https://api.deepseek.com")
+            # response = client.chat.completions.create(
+            #     model="deepseek-chat",
+            #     messages=[
+            #         {"role": "system", "content": "You are a helpful assistant"},
+            #         {"role": "user", "content": "Hello"},
+            #     ],
+            #     stream=False
+            # )
+            # print(response.choices[0].message.content)
             answer = "answer"
             Question.objects.create(question=question, answer=answer, task=task)
             return Response({"message": "Question created"}, status=status.HTTP_200_OK)

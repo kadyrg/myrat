@@ -50,7 +50,6 @@ class Task(models.Model):
         super().save(*args, **kwargs)
 
     def decline_task(self, *args, **kwargs):
-        self.started_date = None
         self.ended_date = None
         self.status = "declined"
         self.duration = 0
@@ -63,8 +62,6 @@ class Task(models.Model):
         super().save(*args, **kwargs)
 
     def deactivate_task(self, *args, **kwargs):
-        self.created_date = None
-        self.started_date = None
         self.ended_date = None
         self.duration = None
         super().save(*args, **kwargs)
@@ -84,7 +81,7 @@ class Task(models.Model):
 
 class Question(models.Model):
     question = models.CharField(max_length=250, editable=False)
-    task = models.ForeignKey("tasks.Task", verbose_name="Task of the question", on_delete=models.CASCADE, editable=False)
+    task = models.ForeignKey("tasks.Task", verbose_name="Task of the question", on_delete=models.CASCADE, editable=False, related_name="questions")
     answer = models.TextField(editable=False)
     
     def __str__(self):
