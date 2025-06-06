@@ -106,19 +106,20 @@ class TaskViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return Response({"message": f"Task {pk} must be started"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # client = OpenAI(api_key="sk-8af330a6f5d841b58284bb98aea64741", base_url="https://api.deepseek.com")
-            # response = client.chat.completions.create(
-            #     model="deepseek-chat",
-            #     messages=[
-            #         {"role": "system", "content": "You are a helpful assistant"},
-            #         {"role": "user", "content": "Hello"},
-            #     ],
-            #     stream=False
-            # )
-            # print(response.choices[0].message.content)
-            answer = "answer"
+            client = OpenAI(api_key="sk-8af330a6f5d841b58284bb98aea64741", base_url="https://api.deepseek.com")
+            system_prompt = f"You are an assistant helping with the task: '{task.title}'. Answer questions based on this task context."
+            response = client.chat.completions.create(
+                model="deepseek-chat",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": question},
+                ],
+                stream=False
+            )
+            print(response.choices[0].message.content)
+            answer = response.choices[0].message.content
             Question.objects.create(question=question, answer=answer, task=task)
-            return Response({"message": "Question created"}, status=status.HTTP_200_OK)
+            return Response({"message": "Question created", "answer": answer}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"detail": f"Something went wrong{e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
