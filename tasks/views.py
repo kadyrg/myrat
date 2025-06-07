@@ -117,8 +117,14 @@ class TaskViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
                 stream=False
             )
             answer = response.choices[0].message.content
-            Question.objects.create(question=question, answer=answer, task=task)
-            return Response({"message": "Question created", "answer": answer}, status=status.HTTP_200_OK)
+            question = Question.objects.create(question=question, answer=answer, task=task)
+            
+            return Response({
+                "id": question.id,
+                "question": question.question,
+                "answer": question.answer,
+                "task": question.task.id
+            }, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"detail": f"Something went wrong{str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
