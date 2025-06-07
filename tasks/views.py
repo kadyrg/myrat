@@ -106,22 +106,21 @@ class TaskViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return Response({"message": f"Task {pk} must be started"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            client = OpenAI(api_key="sk-8af330a6f5d841b58284bb98aea64741", base_url="https://api.deepseek.com")
+            client = OpenAI(api_key="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")
             system_prompt = f"You are an assistant helping with the task: '{task.title}'. Answer questions based on this task context."
             response = client.chat.completions.create(
-                model="deepseek-chat",
+                model="gpt-4",
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": question},
                 ],
                 stream=False
             )
-            print(response.choices[0].message.content)
             answer = response.choices[0].message.content
             Question.objects.create(question=question, answer=answer, task=task)
             return Response({"message": "Question created", "answer": answer}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"detail": f"Something went wrong{e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"detail": f"Something went wrong{str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get_queryset(self):
         employee = self.request.user
