@@ -106,7 +106,7 @@ class TaskViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             return Response({"message": f"Task {pk} must be started"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            client = OpenAI(api_key="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")
+            client = OpenAI(api_key="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")
             system_prompt = f"You are an assistant helping with the task: '{task.title}'. Answer questions based on this task context."
             response = client.chat.completions.create(
                 model="gpt-4",
